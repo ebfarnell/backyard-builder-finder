@@ -2,9 +2,7 @@
  * Supabase client configuration for Backyard Builder Finder
  */
 
-import { createClientComponentClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
 
 // Environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -14,7 +12,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-// Client-side Supabase client
+// Client-side Supabase client (works with static export)
 export const createSupabaseClient = () => {
   return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
@@ -25,15 +23,8 @@ export const createSupabaseClient = () => {
   })
 }
 
-// Client component client (for use in React components)
-export const createSupabaseComponentClient = () => {
-  return createClientComponentClient()
-}
-
-// Server component client (for use in Server Components)
-export const createSupabaseServerClient = () => {
-  return createServerComponentClient({ cookies })
-}
+// Alias for compatibility
+export const createSupabaseComponentClient = createSupabaseClient
 
 // Database types (will be generated from Supabase)
 export interface Database {

@@ -33,10 +33,10 @@ interface AuthContextType {
   loading: boolean
   
   // Auth methods
-  signUp: (email: string, password: string, name: string, organizationName?: string) => Promise<{ error?: AuthError }>
-  signIn: (email: string, password: string) => Promise<{ error?: AuthError }>
-  signOut: () => Promise<{ error?: AuthError }>
-  resetPassword: (email: string) => Promise<{ error?: AuthError }>
+  signUp: (email: string, password: string, name: string, organizationName?: string) => Promise<{ error?: AuthError | null }>
+  signIn: (email: string, password: string) => Promise<{ error?: AuthError | null }>
+  signOut: () => Promise<{ error?: AuthError | null }>
+  resetPassword: (email: string) => Promise<{ error?: AuthError | null }>
   
   // Profile methods
   refreshProfile: () => Promise<void>

@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   description: 'Find buildable space in residential backyards',
   keywords: ['real estate', 'property', 'backyard', 'ADU', 'building'],
   authors: [{ name: 'Backyard Builder Finder Team' }],
-  viewport: 'width=device-width, initial-scale=1',
 };
 
 export default function RootLayout({

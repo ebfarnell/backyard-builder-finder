@@ -280,8 +280,8 @@ export const createApiClient = (baseUrl?: string) => {
       if (typeof window !== 'undefined') {
         // Client-side: get from Supabase session
         try {
-          const { createSupabaseComponentClient } = await import('@supabase/auth-helpers-nextjs');
-          const supabase = createSupabaseComponentClient();
+          const { createSupabaseClient } = await import('@/lib/supabase');
+          const supabase = createSupabaseClient();
           const { data: { session } } = await supabase.auth.getSession();
           return session?.access_token || null;
         } catch (error) {
