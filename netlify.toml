@@ -1,0 +1,97 @@
+# Netlify deployment configuration for Backyard Builder Finder
+
+[build]
+  # Build command - builds the Next.js app from the web workspace
+  command = "cd apps/web && npm ci && npm run build"
+  
+  # Publish directory - Next.js static export output
+  publish = "apps/web/out"
+  
+  # Functions directory (if needed for edge functions)
+  functions = "apps/web/netlify/functions"
+
+# Production environment variables
+[build.environment]
+  NODE_ENV = "production"
+  NEXT_PUBLIC_NODE_ENV = "production"
+  
+  # API Configuration
+  NEXT_PUBLIC_API_URL = "https://backyard-builder-finder-api.onrender.com"
+  
+  # Supabase Configuration
+  NEXT_PUBLIC_SUPABASE_URL = "https://jgmiixdkhbmaeeoniajh.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnbWlpeGRraGJtYWVlb25pYWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDM1OTMsImV4cCI6MjA3MDcxOTU5M30.WB7Xqns_rHM_d4in52mldMQ2AAx5vMILLUaKrZ35U9s"
+  
+  # Feature Flags
+  NEXT_PUBLIC_ENABLE_DEMO_MODE = "false"
+  NEXT_PUBLIC_ENABLE_ANALYTICS = "true"
+  NEXT_PUBLIC_ENABLE_DEBUG = "false"
+
+# Redirect rules for SPA routing
+[[redirects]]
+  from = "/api/*"
+  to = "https://backyard-builder-finder-api.onrender.com/:splat"
+  status = 200
+  force = true
+
+# Catch-all for Next.js routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache API responses briefly
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+
+# Enable build optimization
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true
+
+# Enable context-based deploys
+[context.production]
+  command = "cd apps/web && npm ci && npm run build"
+
+[context.deploy-preview]
+  command = "cd apps/web && npm ci && npm run build"
+  [context.deploy-preview.environment]
+    NEXT_PUBLIC_API_URL = "https://backyard-builder-finder-api.onrender.com"
+    NEXT_PUBLIC_ENABLE_DEBUG = "true"
+
+[context.branch-deploy]
+  command = "cd apps/web && npm ci && npm run build"
+  [context.branch-deploy.environment]
+    NEXT_PUBLIC_API_URL = "https://backyard-builder-finder-api.onrender.com"
+    NEXT_PUBLIC_ENABLE_DEBUG = "true"

@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Output configuration for Docker
-  output: 'standalone',
+  // Output configuration for Netlify
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true
+  },
   
   // Environment variables exposed to the browser
   env: {
@@ -17,53 +21,8 @@ const nextConfig = {
     serverComponentsExternalPackages: ['@bbf/shared'],
   },
   
-  // Image optimization
-  images: {
-    domains: [
-      'localhost',
-      's3.amazonaws.com',
-      'via.placeholder.com', // For development
-    ],
-    unoptimized: process.env.NODE_ENV === 'development',
-  },
   
-  // Headers for security
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-        ],
-      },
-    ];
-  },
   
-  // Redirects
-  async redirects() {
-    return [
-      {
-        source: '/dashboard',
-        destination: '/search',
-        permanent: false,
-      },
-    ];
-  },
   
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
@@ -93,8 +52,6 @@ const nextConfig = {
   // Power user features
   poweredByHeader: false,
   
-  // Trailing slash
-  trailingSlash: false,
 };
 
 module.exports = nextConfig;

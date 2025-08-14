@@ -272,15 +272,22 @@ export class ApiClient {
   }
 }
 
-// Default client factory for use in Next.js
+// Default client factory for use in Next.js with Supabase
 export const createApiClient = (baseUrl?: string) => {
   return new ApiClient({
     baseUrl: baseUrl || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
     getAuthToken: async () => {
-      // This will be implemented when we add NextAuth
       if (typeof window !== 'undefined') {
-        // Client-side: get from NextAuth session
-        return null; // TODO: Implement
+        // Client-side: get from Supabase session
+        try {
+          const { createSupabaseComponentClient } = await import('@supabase/auth-helpers-nextjs');
+          const supabase = createSupabaseComponentClient();
+          const { data: { session } } = await supabase.auth.getSession();
+          return session?.access_token || null;
+        } catch (error) {
+          console.warn('Failed to get Supabase token:', error);
+          return null;
+        }
       }
       return null;
     },
