@@ -1,0 +1,23 @@
+{
+  "name": "@bbf/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FastAPI backend for Backyard Builder Finder",
+  "scripts": {
+    "dev": "uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+    "start": "gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000",
+    "test": "pytest",
+    "test:cov": "pytest --cov=. --cov-report=html --cov-report=term",
+    "lint": "black . && isort . && flake8 . && mypy .",
+    "format": "black . && isort .",
+    "typecheck": "mypy .",
+    "db:migrate": "alembic upgrade head",
+    "db:revision": "alembic revision --autogenerate",
+    "db:downgrade": "alembic downgrade -1",
+    "db:reset": "alembic downgrade base && alembic upgrade head",
+    "clean": "find . -type d -name __pycache__ -delete && find . -name '*.pyc' -delete"
+  },
+  "dependencies": {
+    "@bbf/shared": "workspace:*"
+  }
+}

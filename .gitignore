@@ -1,0 +1,134 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Test results
+test-results/
+playwright-report/
+blob-report/
+
+# Temporary files
+tmp/
+temp/
+
+# Supabase
+.supabase/
+
+# ========================
+# Backyard Builder Finder Specific
+# ========================
+
+# Python (FastAPI backend)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Database
+*.db
+*.sqlite3
+
+# Next.js
+.next/
+out/
+*.tsbuildinfo
+
+# Docker
+.dockerignore
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*tfplan*
+.terraformrc
+terraform.rc
+
+# Package manager locks (keep pnpm-lock.yaml)
+package-lock.json
+yarn.lock
+
+# Application specific
+secrets/
+*.key
+*.pem
+*.crt
+exports/
+downloads/
+.cache/
+.parcel-cache/
+dev.db
+test.db
+*.backup
+*.bak

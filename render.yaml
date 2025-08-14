@@ -1,0 +1,39 @@
+# Render deployment configuration for Backyard Builder Finder
+services:
+  # FastAPI Backend Service
+  - type: web
+    name: backyard-builder-finder-api
+    env: python
+    plan: starter # Free tier
+    buildCommand: pip install -r apps/api/requirements.txt
+    startCommand: cd apps/api && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+    dockerfilePath: ./apps/api/Dockerfile.render
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: DATABASE_URL
+        value: postgresql://postgres:bbf_secure_2025!@db.jgmiixdkhbmaeeoniajh.supabase.co:5432/postgres
+      - key: SUPABASE_URL
+        value: https://jgmiixdkhbmaeeoniajh.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnbWlpeGRraGJtYWVlb25pYWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDM1OTMsImV4cCI6MjA3MDcxOTU5M30.WB7Xqns_rHM_d4in52mldMQ2AAx5vMILLUaKrZ35U9s
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnbWlpeGRraGJtYWVlb25pYWpoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE0MzU5MywiZXhwIjoyMDcwNzE5NTkzfQ.UhhYGc4cV1MTx_iDtk-5L4eovC3ZOuGbK-rVlJ2gezc
+      - key: JWT_SECRET
+        generateValue: true # Render will generate a secure JWT secret
+      - key: CORS_ORIGINS
+        value: https://backyard-builder-finder.netlify.app,https://main--backyard-builder-finder.netlify.app
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: backyard-builder-finder-redis
+          property: connectionString
+
+  # Redis Cache Service
+  - type: redis
+    name: backyard-builder-finder-redis
+    plan: starter # Free tier
+    maxmemoryPolicy: allkeys-lru
