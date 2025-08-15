@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Venice Urban Mixed Development",
+        "description": "Dense urban area with mixed residential and commercial, smaller lots, varied development",
+        "expected_results": "Smaller lot sizes, mixed zoning, lower pool presence due to density constraints"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4750, 33.9950],
+            [-118.4650, 33.9950],
+            [-118.4650, 33.9850],
+            [-118.4750, 33.9850],
+            [-118.4750, 33.9950]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Manhattan Beach Community",
+        "description": "High-value beach community with family homes, good lot sizes near coast",
+        "expected_results": "Premium beach properties with moderate to large lots, many pools, high sale prices"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4200, 33.8950],
+            [-118.4100, 33.8950],
+            [-118.4100, 33.8850],
+            [-118.4200, 33.8850],
+            [-118.4200, 33.8950]
+          ]
+        ]
+      }
+    }
+  ]
+}

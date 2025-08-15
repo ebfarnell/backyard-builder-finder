@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Brentwood Upscale Residential",
+        "description": "High-end residential area with large lots and luxury properties",
+        "expected_results": "Large lot luxury properties, high pool presence, significant rear yard space"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4650, 34.0650],
+            [-118.4550, 34.0650],
+            [-118.4550, 34.0550],
+            [-118.4650, 34.0550],
+            [-118.4650, 34.0650]
+          ]
+        ]
+      }
+    }
+  ]
+}

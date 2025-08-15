@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Beverly Hills Residential Area",
+        "description": "High-end residential area with large lots, likely to have pools and significant rear yards",
+        "expected_results": "Luxury properties with large lot sizes, high property values, many pools"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4050, 34.0750],
+            [-118.3990, 34.0750],
+            [-118.3990, 34.0690],
+            [-118.4050, 34.0690],
+            [-118.4050, 34.0750]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,117 +1,78 @@
-# Backyard Builder Finder
+# Yard Qualifier
 
-A multi-tenant SaaS platform for identifying buildable space in residential backyard parcels.
-
-## Features
-
-- **Parcel Search**: Search by city, state, county, ZIP, address, or neighborhood
-- **Buildable Area Calculation**: Compute available space after setbacks, structures, and obstacles
-- **Fit Testing**: Test if target unit size fits in available space
-- **Zoning Compliance**: Check lot coverage, FAR, and zoning restrictions
-- **Multi-source Data**: Integrates with free/open data sources, with pluggable paid connectors
-- **Filtering**: HOA presence, pools, terrain, flood zones, historic districts
-- **Listing Integration**: Show current "for sale" properties for eligible parcels
-- **Export Options**: CSV, GeoJSON, and PDF reports
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js 18+ and pnpm 8+
-- Docker and Docker Compose
-- AWS CLI (for production deployment)
-- Terraform (for infrastructure)
-
-### Local Development
-
-1. **Clone and install dependencies:**
-   ```bash
-   git clone <repository-url>
-   cd backyard-builder-finder
-   pnpm install
-   ```
-
-2. **Start local environment:**
-   ```bash
-   pnpm dev
-   ```
-   This runs `docker-compose up` which starts:
-   - PostgreSQL with PostGIS
-   - FastAPI backend (port 8000)
-   - Next.js frontend (port 3000)
-   - Redis for caching
-
-3. **Access the application:**
-   - Frontend: http://localhost:3000
-   - API docs: http://localhost:8000/docs
-   - Database: localhost:5432 (bbf_dev/bbf_dev)
-
-### Project Structure
-
-```
-├── apps/
-│   ├── web/                 # Next.js frontend
-│   └── api/                 # FastAPI backend
-├── packages/
-│   └── shared/              # Shared TypeScript types & utilities
-├── infra/                   # Terraform infrastructure
-├── ops/                     # CI/CD and deployment scripts
-└── docs/                    # Documentation
-```
+AI-powered rear yard qualification system for real estate parcels using computer vision and LLM analysis.
 
 ## Architecture
 
-- **Frontend**: Next.js with App Router, MapLibre GL, Tailwind CSS
-- **Backend**: FastAPI with async PostgreSQL and PostGIS
-- **Database**: PostgreSQL 15 with PostGIS, row-level security
-- **Infrastructure**: AWS ECS, RDS, S3, CloudFront, Lambda
-- **Authentication**: NextAuth.js with Google/Microsoft SSO
+- **Frontend**: Vite + React + TypeScript + Tailwind + MapLibre GL JS
+- **API**: Node.js + Fastify for parcel search, MVT tiles, Regrid proxy
+- **CV Service**: Python + FastAPI + YOLOv8n for pool detection
+- **Database**: Supabase Postgres + PostGIS with RLS
+- **Edge Functions**: Supabase TypeScript for LLM proxy
+- **Deployment**: Render (Static SPA + Web Services)
 
-## Data Sources (Free/Open First)
+## Features
 
-- **Geocoding**: Nominatim (OSM) with optional paid providers
-- **Parcels**: ArcGIS FeatureServer/OGC endpoints (configurable per region)
-- **Buildings**: Microsoft US Building Footprints + OSM
-- **Imagery**: Open tiles via MapLibre, optional paid providers with user keys
-- **Listings**: RESO Web API (with user credentials) or public feeds
+- **Geospatial Search**: Draw AOI or select by city/ZIP
+- **Staged Filtering**: SQL → Computer Vision → LLM analysis
+- **Pool Detection**: YOLOv8n on NAIP imagery
+- **Rear Yard Analysis**: PostGIS-based geometric heuristics
+- **Multi-Provider LLM**: OpenAI (default) + Anthropic (optional)
+- **Export**: CSV + GeoJSON with full analysis results
+- **Real-time Progress**: Server-sent events for search status
 
-## Production Deployment
+## Quick Start
 
-1. **Configure AWS credentials:**
-   ```bash
-   aws configure
-   ```
+```bash
+# Install dependencies
+pnpm install
 
-2. **Deploy infrastructure:**
-   ```bash
-   pnpm infra:plan
-   pnpm infra:apply
-   ```
+# Set up environment
+cp .env.example .env
+# Edit .env with your API keys
 
-3. **Build and deploy applications:**
-   ```bash
-   # Triggered automatically via GitHub Actions
-   git push origin main
-   ```
+# Start Supabase (requires Docker)
+npx supabase start
 
-## Environment Variables
+# Run migrations
+pnpm run db:migrate
 
-See `.env.example` files in each app directory for required configuration.
+# Seed sample data
+pnpm run db:seed
 
-## Legal & Compliance
+# Start all services
+pnpm run dev
+```
 
-- Portal scraping is **disabled by default** and requires explicit ToS acceptance
-- Paid data sources require manual approval via GitHub issues
-- User-provided API keys are encrypted with AWS KMS
-- Audit logging for all data access and exports
+Visit http://localhost:5173 to access the application.
 
-## Contributing
+## Development
 
-1. Create feature branch from `main`
-2. Make changes with tests
-3. Commit with conventional commit format
-4. Open pull request with description
+- **Web App**: http://localhost:5173
+- **API Server**: http://localhost:3001
+- **CV Service**: http://localhost:8000
+- **Supabase Studio**: http://localhost:54323
+
+## Testing
+
+```bash
+# Unit tests
+pnpm run test
+
+# E2E tests
+pnpm run test:e2e
+
+# Linting
+pnpm run lint
+
+# Type checking
+pnpm run typecheck
+```
+
+## Deployment
+
+See `docs/ROLLBACK.md` for deployment and rollback procedures.
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT

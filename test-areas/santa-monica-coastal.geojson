@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Santa Monica Coastal Residential",
+        "description": "Mixed density coastal properties near the beach, high property values but smaller lots",
+        "expected_results": "High-value properties with smaller lot sizes, mixed development density, some pools"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4970, 34.0220],
+            [-118.4940, 34.0220],
+            [-118.4940, 34.0180],
+            [-118.4970, 34.0180],
+            [-118.4970, 34.0220]
+          ]
+        ]
+      }
+    }
+  ]
+}

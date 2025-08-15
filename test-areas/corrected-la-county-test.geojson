@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Corrected LA County Test Area",
+        "description": "Area that actually includes all seed data parcels",
+        "covers": "Beverly Hills, Santa Monica, and Hollywood Hills seed data"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.5100, 34.0100],
+            [-118.3600, 34.0100],
+            [-118.3600, 34.1300],
+            [-118.5100, 34.1300],
+            [-118.5100, 34.0100]
+          ]
+        ]
+      }
+    }
+  ]
+}

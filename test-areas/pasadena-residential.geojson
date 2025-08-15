@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pasadena Residential Neighborhood",
+        "description": "Traditional suburban family homes with good lot sizes and established neighborhoods",
+        "expected_results": "Suburban properties with consistent lot sizes, family-oriented, moderate pool presence"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.1550, 34.1650],
+            [-118.1450, 34.1650],
+            [-118.1450, 34.1550],
+            [-118.1550, 34.1550],
+            [-118.1550, 34.1650]
+          ]
+        ]
+      }
+    }
+  ]
+}

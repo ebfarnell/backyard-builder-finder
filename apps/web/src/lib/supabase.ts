@@ -1,194 +1,93 @@
-/**
- * Supabase client configuration for Backyard Builder Finder
- */
+import { createClient } from '@supabase/supabase-js';
 
-import { createClient } from '@supabase/supabase-js'
-
-// Environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+  throw new Error('Missing Supabase environment variables');
 }
 
-// Client-side Supabase client (works with static export)
-export const createSupabaseClient = () => {
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  })
-}
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+  },
+});
 
-// Alias for compatibility
-export const createSupabaseComponentClient = createSupabaseClient
-
-// Database types (will be generated from Supabase)
-export interface Database {
+export type Database = {
   public: {
     Tables: {
-      organizations: {
+      parcels: {
         Row: {
-          id: string
-          name: string
-          plan_tier: 'free' | 'pro' | 'enterprise'
-          limits_jsonb: any
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          plan_tier?: 'free' | 'pro' | 'enterprise'
-          limits_jsonb?: any
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          plan_tier?: 'free' | 'pro' | 'enterprise'
-          limits_jsonb?: any
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      users: {
+          id: string;
+          apn: string;
+          address: string | null;
+          geometry: any;
+          lot_area: number;
+          zoning_code: string | null;
+          last_sale_price: number | null;
+          last_sale_date: string | null;
+          rear_free_sqft: number | null;
+          has_pool: boolean | null;
+          qualifies: boolean | null;
+          rationale: string | null;
+          hoa_status: 'unknown' | 'yes' | 'no';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['parcels']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['parcels']['Insert']>;
+      };
+      building_footprints: {
         Row: {
-          id: string
-          auth_user_id: string
-          org_id: string
-          email: string
-          name: string
-          sso_provider: 'google' | 'microsoft' | 'email'
-          sso_subject: string | null
-          role: 'admin' | 'user' | 'viewer'
-          is_active: boolean
-          last_login: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          auth_user_id: string
-          org_id: string
-          email: string
-          name: string
-          sso_provider?: 'google' | 'microsoft' | 'email'
-          sso_subject?: string | null
-          role?: 'admin' | 'user' | 'viewer'
-          is_active?: boolean
-          last_login?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          auth_user_id?: string
-          org_id?: string
-          email?: string
-          name?: string
-          sso_provider?: 'google' | 'microsoft' | 'email'
-          sso_subject?: string | null
-          role?: 'admin' | 'user' | 'viewer'
-          is_active?: boolean
-          last_login?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      searches: {
+          id: string;
+          parcel_id: string;
+          geometry: any;
+          is_primary: boolean;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['building_footprints']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['building_footprints']['Insert']>;
+      };
+      cv_detections: {
         Row: {
-          id: string
-          org_id: string
-          user_id: string
-          name: string
-          area_geom: any
-          area_name: string | null
-          filters_jsonb: any
-          options_jsonb: any
-          status: 'draft' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
-          total_candidates: number | null
-          filtered_count: number | null
-          results_count: number | null
-          execution_time_ms: number | null
-          stage_timings_jsonb: any | null
-          costs_jsonb: any | null
-          error_message: string | null
-          error_details_jsonb: any | null
-          cache_key: string | null
-          results_cached_until: string | null
-          created_at: string
-          updated_at: string
-          started_at: string | null
-          completed_at: string | null
-        }
-        Insert: {
-          id?: string
-          org_id: string
-          user_id: string
-          name: string
-          area_geom: any
-          area_name?: string | null
-          filters_jsonb?: any
-          options_jsonb?: any
-          status?: 'draft' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
-          total_candidates?: number | null
-          filtered_count?: number | null
-          results_count?: number | null
-          execution_time_ms?: number | null
-          stage_timings_jsonb?: any | null
-          costs_jsonb?: any | null
-          error_message?: string | null
-          error_details_jsonb?: any | null
-          cache_key?: string | null
-          results_cached_until?: string | null
-          created_at?: string
-          updated_at?: string
-          started_at?: string | null
-          completed_at?: string | null
-        }
-        Update: {
-          id?: string
-          org_id?: string
-          user_id?: string
-          name?: string
-          area_geom?: any
-          area_name?: string | null
-          filters_jsonb?: any
-          options_jsonb?: any
-          status?: 'draft' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
-          total_candidates?: number | null
-          filtered_count?: number | null
-          results_count?: number | null
-          execution_time_ms?: number | null
-          stage_timings_jsonb?: any | null
-          costs_jsonb?: any | null
-          error_message?: string | null
-          error_details_jsonb?: any | null
-          cache_key?: string | null
-          results_cached_until?: string | null
-          created_at?: string
-          updated_at?: string
-          started_at?: string | null
-          completed_at?: string | null
-        }
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      plan_tier: 'free' | 'pro' | 'enterprise'
-      user_role: 'admin' | 'user' | 'viewer'
-      sso_provider: 'google' | 'microsoft' | 'email'
-      search_status: 'draft' | 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
-    }
-  }
-}
+          id: string;
+          parcel_id: string;
+          kind: 'pool' | 'building';
+          geometry: any;
+          confidence: number;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['cv_detections']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['cv_detections']['Insert']>;
+      };
+      api_usage: {
+        Row: {
+          id: string;
+          user_id: string;
+          search_id: string;
+          provider: string;
+          model: string;
+          tokens_used: number;
+          cost: number;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['api_usage']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['api_usage']['Insert']>;
+      };
+      user_api_keys: {
+        Row: {
+          id: string;
+          user_id: string;
+          provider: 'openai' | 'anthropic';
+          key_hash: string;
+          is_encrypted: boolean;
+          created_at: string;
+          expires_at: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['user_api_keys']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['user_api_keys']['Insert']>;
+      };
+    };
+  };
+};

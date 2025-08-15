@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Culver City Mixed Residential/Commercial",
+        "description": "Mixed-use area with residential and commercial properties, moderate density",
+        "expected_results": "Mixed property types and sizes, varied zoning, moderate development potential"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4050, 34.0150],
+            [-118.3950, 34.0150],
+            [-118.3950, 34.0050],
+            [-118.4050, 34.0050],
+            [-118.4050, 34.0150]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "WORKING Test Area - Guaranteed Results",
+        "description": "This area WILL return 6 parcels from Beverly Hills and Hollywood Hills seed data",
+        "coordinates_info": "Covers both Beverly Hills (-118.4001, 34.0701) and Hollywood Hills (-118.3751, 34.1201)"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.4100, 34.0600],
+            [-118.3700, 34.0600], 
+            [-118.3700, 34.1300],
+            [-118.4100, 34.1300],
+            [-118.4100, 34.0600]
+          ]
+        ]
+      }
+    }
+  ]
+}

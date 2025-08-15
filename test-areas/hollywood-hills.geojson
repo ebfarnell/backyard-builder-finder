@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hollywood Hills Hillside Properties",
+        "description": "Hillside properties with varied lot sizes, challenging terrain but high values",
+        "expected_results": "Properties on slopes with varied rear yard sizes, pools challenging due to terrain"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-118.3760, 34.1210],
+            [-118.3740, 34.1210],
+            [-118.3740, 34.1190],
+            [-118.3760, 34.1190],
+            [-118.3760, 34.1210]
+          ]
+        ]
+      }
+    }
+  ]
+}

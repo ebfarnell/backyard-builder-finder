@@ -1,39 +1,128 @@
-# Render deployment configuration for Backyard Builder Finder
 services:
-  # FastAPI Backend Service
+  # Static site for the web app
   - type: web
-    name: backyard-builder-finder-api
-    env: python
-    plan: starter # Free tier
-    buildCommand: pip install -r apps/api/requirements.txt
-    startCommand: cd apps/api && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
-    dockerfilePath: ./apps/api/Dockerfile.render
-    healthCheckPath: /health
+    name: yard-qualifier-web
+    runtime: static
+    buildCommand: pnpm install --frozen-lockfile && cd apps/web && pnpm run build
+    staticPublishPath: apps/web/dist
+    pullRequestPreviewsEnabled: false
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      - path: /*
+        name: X-XSS-Protection
+        value: "1; mode=block"
+      - path: /*
+        name: Strict-Transport-Security
+        value: "max-age=31536000; includeSubDomains"
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:"
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
-      - key: ENVIRONMENT
-        value: production
-      - key: DEBUG
-        value: false
-      - key: DATABASE_URL
-        value: postgresql://postgres:bbf_secure_2025!@db.jgmiixdkhbmaeeoniajh.supabase.co:5432/postgres
-      - key: SUPABASE_URL
-        value: https://jgmiixdkhbmaeeoniajh.supabase.co
-      - key: SUPABASE_ANON_KEY
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnbWlpeGRraGJtYWVlb25pYWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDM1OTMsImV4cCI6MjA3MDcxOTU5M30.WB7Xqns_rHM_d4in52mldMQ2AAx5vMILLUaKrZ35U9s
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnbWlpeGRraGJtYWVlb25pYWpoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE0MzU5MywiZXhwIjoyMDcwNzE5NTkzfQ.UhhYGc4cV1MTx_iDtk-5L4eovC3ZOuGbK-rVlJ2gezc
-      - key: JWT_SECRET
-        generateValue: true # Render will generate a secure JWT secret
-      - key: CORS_ORIGINS
-        value: https://backyard-builder-finder.netlify.app,https://main--backyard-builder-finder.netlify.app
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: backyard-builder-finder-redis
-          property: connectionString
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_APP_URL
+        value: "https://yard-qualifier-web.onrender.com"
+      - key: VITE_API_URL
+        value: "https://yard-qualifier-api.onrender.com"
+      - key: VITE_SENTRY_DSN_WEB
+        sync: false
 
-  # Redis Cache Service
-  - type: redis
-    name: backyard-builder-finder-redis
-    plan: starter # Free tier
-    maxmemoryPolicy: allkeys-lru
+  # API server
+  - type: web
+    name: yard-qualifier-api
+    runtime: node
+    plan: starter
+    buildCommand: pnpm install --frozen-lockfile && cd apps/api && pnpm run build
+    startCommand: cd apps/api && pnpm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    numInstances: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: CV_SERVICE_URL
+        value: "https://yard-qualifier-cv.onrender.com"
+      - key: REGRID_API_KEY
+        value: "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyZWdyaWQuY29tIiwiaWF0IjoxNzU1MDMyNDcwLCJleHAiOjE3NTc2MjQ0NzAsInUiOjU3MzgzMSwiZyI6MjMxNTMsImNhcCI6InBhOnRzOnBzOmJmOm1hOnR5OmVvOnpvOnNiIn0.rq0JXJ0FEvv8TrbDADxJ9Sieor6xjyPo54bbCOXAzsU"
+      - key: NAIP_TEMPLATE_URL
+        value: "https://naip-analytic.s3-us-west-2.amazonaws.com/naip/{z}/{x}/{y}.jpg"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: LLM_ANTHROPIC_ENABLED
+        value: "false"
+      - key: SENTRY_DSN_API
+        sync: false
+      - key: MAX_PARCELS_PER_SEARCH
+        value: "10000"
+      - key: LLM_BUDGET_PER_SEARCH
+        value: "1.0"
+      - key: SEARCH_RATE_LIMIT_PER_HOUR
+        value: "10"
+
+  # Computer Vision service
+  - type: web
+    name: yard-qualifier-cv
+    runtime: python
+    plan: starter
+    buildCommand: pip install --no-cache-dir -r services/cv/requirements.txt
+    startCommand: cd services/cv && python -m uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 30
+    healthCheckPath: /health
+    autoDeploy: true
+    numInstances: 1
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PYTHONPATH
+        value: "/opt/render/project/src"
+      - key: NAIP_TEMPLATE_URL
+        value: "https://naip-analytic.s3-us-west-2.amazonaws.com/naip/{z}/{x}/{y}.jpg"
+      - key: SENTRY_DSN_API
+        sync: false
+      - key: CV_CACHE_DIR
+        value: /tmp/cv_cache
+      - key: CV_CACHE_TTL
+        value: "604800"
+      - key: CV_MAX_CACHE_SIZE
+        value: "1000"
+      - key: YOLO_MODEL_PATH
+        value: yolov8n.pt
+      - key: TORCH_HOME
+        value: /tmp/torch_cache
+      - key: TRANSFORMERS_CACHE
+        value: /tmp/transformers_cache
+# Note: Using Supabase for PostGIS database instead of Render's database
+# Render doesn't provide PostGIS extensions out of the box

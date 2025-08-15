@@ -1,41 +1,31 @@
 {
-  "name": "backyard-builder-finder",
+  "name": "yard-qualifier",
   "version": "1.0.0",
+  "description": "AI-powered rear yard qualification system for real estate parcels",
   "private": true,
-  "description": "Multi-tenant SaaS for finding buildable backyard space in residential parcels",
   "workspaces": [
     "apps/*",
+    "services/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "docker-compose up",
+    "dev": "pnpm run --parallel dev",
     "build": "pnpm run --recursive build",
-    "lint": "pnpm run --recursive lint",
-    "format": "pnpm run --recursive format",
-    "typecheck": "pnpm run --recursive typecheck",
     "test": "pnpm run --recursive test",
-    "clean": "pnpm run --recursive clean && docker-compose down -v",
-    "infra:plan": "cd infra && terraform plan",
-    "infra:apply": "cd infra && terraform apply",
-    "infra:destroy": "cd infra && terraform destroy"
+    "test:e2e": "pnpm --filter web test:e2e",
+    "lint": "pnpm run --recursive lint",
+    "typecheck": "pnpm run --recursive typecheck",
+    "clean": "pnpm run --recursive clean"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.1.0"
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eventsource": "^4.0.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
   },
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
-  },
-  "packageManager": "pnpm@8.15.0",
-  "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,md}": ["prettier --write"],
-    "*.{ts,tsx}": ["eslint --fix"]
-  }
+  "packageManager": "pnpm@8.15.1"
 }
