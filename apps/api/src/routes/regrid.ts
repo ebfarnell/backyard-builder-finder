@@ -10,7 +10,7 @@ const RegridFetchSchema = z.object({
 const RegridPointSchema = z.object({
   lat: z.number(),
   lon: z.number(),
-  radius: z.number().optional().default(0.001), // Default ~100m radius
+  radius: z.number().optional().default(250), // Default 250m radius
 });
 
 export const regridRoutes: FastifyPluginAsync = async (fastify) => {
@@ -34,11 +34,23 @@ export const regridRoutes: FastifyPluginAsync = async (fastify) => {
         return cached.data;
       }
 
-      // Fetch from Regrid API
-      const regridUrl = new URL('https://app.regrid.com/api/v1/search.geojson');
+      // Fetch from Regrid API v2 area search with polygon
+      const regridUrl = new URL('https://app.regrid.com/api/v2/parcels/area');
       regridUrl.searchParams.set('token', config.REGRID_API_KEY);
       regridUrl.searchParams.set('limit', '1000');
-      regridUrl.searchParams.set('bbox', bbox.join(','));
+      
+      // Convert bbox to GeoJSON polygon
+      const polygon = {
+        type: 'Polygon',
+        coordinates: [[
+          [minLng, minLat],
+          [maxLng, minLat], 
+          [maxLng, maxLat],
+          [minLng, maxLat],
+          [minLng, minLat]
+        ]]
+      };
+      regridUrl.searchParams.set('geojson', JSON.stringify(polygon));
 
       const response = await fetch(regridUrl.toString(), {
         headers: {
@@ -104,11 +116,17 @@ export const regridRoutes: FastifyPluginAsync = async (fastify) => {
     const { lat, lon, radius } = RegridPointSchema.parse(request.body);
 
     try {
-      // Create a small bounding box around the point
-      const minLat = lat - radius;
-      const maxLat = lat + radius;
-      const minLng = lon - radius;
-      const maxLng = lon + radius;
+      // Create a small bounding box around the point (convert meters to degrees)
+      const latDegreesPerMeter = 1 / 111000; // Approximate
+      const lonDegreesPerMeter = 1 / (111000 * Math.cos(lat * Math.PI / 180));
+      
+      const latOffset = radius * latDegreesPerMeter;
+      const lonOffset = radius * lonDegreesPerMeter;
+      
+      const minLat = lat - latOffset;
+      const maxLat = lat + latOffset;
+      const minLng = lon - lonOffset;
+      const maxLng = lon + lonOffset;
       const bbox = [minLng, minLat, maxLng, maxLat];
 
       // Check cache first - look for nearby cached data
@@ -151,11 +169,12 @@ export const regridRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
-      // If no cached data, fetch from Regrid API
-      const regridUrl = new URL('https://app.regrid.com/api/v1/search.geojson');
+      // If no cached data, fetch from Regrid API v2 point search
+      const regridUrl = new URL('https://app.regrid.com/api/v2/parcels/point');
       regridUrl.searchParams.set('token', config.REGRID_API_KEY);
-      regridUrl.searchParams.set('limit', '10'); // Small limit for point queries
-      regridUrl.searchParams.set('bbox', bbox.join(','));
+      regridUrl.searchParams.set('lat', lat.toString());
+      regridUrl.searchParams.set('lon', lon.toString());
+      regridUrl.searchParams.set('radius', radius.toString()); // Radius is already in meters
 
       const response = await fetch(regridUrl.toString(), {
         headers: {
