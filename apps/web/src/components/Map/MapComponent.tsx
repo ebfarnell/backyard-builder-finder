@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Map, { MapRef, Source, Layer, Marker } from 'react-map-gl/maplibre';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import type { Geometry } from '@shared/types';
+import type { Geometry, FeatureCollection } from '@shared/types';
 import { useSearch } from '@/contexts/SearchContext';
+import { api } from '@/lib/api';
 import DrawingToolbar from './DrawingToolbar';
 import AddressSearch from './AddressSearch';
 
@@ -33,9 +34,10 @@ const INITIAL_VIEW_STATE = {
 
 interface MapComponentProps {
   onAOIChange?: (geometry: Geometry | null) => void;
+  onParcelSelect?: (parcel: FeatureCollection | null) => void;
 }
 
-export default function MapComponent({ onAOIChange }: MapComponentProps) {
+export default function MapComponent({ onAOIChange, onParcelSelect }: MapComponentProps) {
   const mapRef = useRef<MapRef>(null);
   const drawRef = useRef<MapboxDrawInstance | null>(null);
   const { results, aoi } = useSearch();
@@ -305,7 +307,7 @@ export default function MapComponent({ onAOIChange }: MapComponentProps) {
   }, [onAOIChange]);
 
   // Handle address selection from search
-  const handleAddressSelect = useCallback((result: any) => {
+  const handleAddressSelect = useCallback(async (result: any) => {
     const addressMarker: AddressMarker = {
       address: result.address,
       lat: result.lat,
@@ -323,7 +325,25 @@ export default function MapComponent({ onAOIChange }: MapComponentProps) {
         duration: 2000
       });
     }
-  }, []);
+
+    // Fetch parcel data for the selected address
+    try {
+      console.log('Fetching parcel data for coordinates:', result.lat, result.lon);
+      const parcelData = await api.fetchParcelByCoordinates(result.lat, result.lon);
+      console.log('Received parcel data:', parcelData);
+      
+      onParcelSelect?.(parcelData);
+      
+      if (parcelData.features && parcelData.features.length > 0) {
+        console.log('Found parcel:', parcelData.features[0].properties);
+      } else {
+        console.log('No parcel found for this address');
+      }
+    } catch (error) {
+      console.error('Failed to fetch parcel data:', error);
+      onParcelSelect?.(null);
+    }
+  }, [onParcelSelect]);
 
   // Create AOI around selected address
   const handleCreateAOI = useCallback((result: any) => {

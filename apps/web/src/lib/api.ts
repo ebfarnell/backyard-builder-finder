@@ -86,6 +86,14 @@ export const api = {
     });
   },
 
+  // Fetch parcel data by coordinates
+  async fetchParcelByCoordinates(lat: number, lon: number, radius?: number): Promise<FeatureCollection> {
+    return fetchAPI('/api/regrid/parcel', {
+      method: 'POST',
+      body: JSON.stringify({ lat, lon, radius }),
+    });
+  },
+
   // Health check
   async health(): Promise<{ status: string; timestamp: string }> {
     return fetchAPI('/api/health');

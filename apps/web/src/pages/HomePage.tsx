@@ -8,7 +8,7 @@ import ResultsList from '@/components/Search/ResultsList';
 import { useSearch } from '@/contexts/SearchContext';
 // import { useToast } from '@/components/ui/Toaster';
 import { api } from '@/lib/api';
-import type { Parcel } from '@shared/types';
+import type { Parcel, FeatureCollection } from '@shared/types';
 
 export default function HomePage() {
   const {
@@ -27,6 +27,7 @@ export default function HomePage() {
 
   // const { addToast } = useToast();
   const [selectedParcel, setSelectedParcel] = useState<Parcel | null>(null);
+  const [selectedAddressParcel, setSelectedAddressParcel] = useState<FeatureCollection | null>(null);
   const [autoSearchEnabled, setAutoSearchEnabled] = useState(false);
 
   // Auto-trigger search when AOI is drawn (if enabled)
@@ -176,6 +177,71 @@ export default function HomePage() {
               )}
             </div>
 
+            {/* Selected Address Parcel */}
+            {selectedAddressParcel && selectedAddressParcel.features.length > 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2 text-sm text-yellow-800">
+                    <MapPin className="h-4 w-4" />
+                    <span className="font-medium">Selected Address</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedAddressParcel(null)}
+                    className="text-yellow-700 hover:text-yellow-800 hover:bg-yellow-100"
+                  >
+                    Clear
+                  </Button>
+                </div>
+                {(() => {
+                  const parcel = selectedAddressParcel.features[0];
+                  const props = parcel.properties || {};
+                  
+                  return (
+                    <div className="space-y-2">
+                      <div className="text-sm text-yellow-800">
+                        <p className="font-medium">
+                          {props.saddno && props.saddstr 
+                            ? `${props.saddno} ${props.saddstr}`.trim()
+                            : props.parcelnumb || props.ll_gissid || 'Unknown Address'
+                          }
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 text-xs text-yellow-700">
+                        {props.parcelnumb && (
+                          <div>
+                            <span className="font-medium">APN:</span> {props.parcelnumb}
+                          </div>
+                        )}
+                        {props.shape_area && (
+                          <div>
+                            <span className="font-medium">Lot Size:</span> {new Intl.NumberFormat('en-US').format(Math.round(Number(props.shape_area)))} sq ft
+                          </div>
+                        )}
+                        {props.zoning && (
+                          <div>
+                            <span className="font-medium">Zoning:</span> {props.zoning}
+                          </div>
+                        )}
+                        {props.county && (
+                          <div>
+                            <span className="font-medium">County:</span> {props.county}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="text-xs text-yellow-600 bg-yellow-100 p-2 rounded">
+                        <p className="font-medium">Property Information</p>
+                        <p>This property data is retrieved from Regrid API. Use the search tools above to analyze this property's qualification for yard expansion projects.</p>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
             {/* Search Filters */}
             <SearchFilters
               filters={filters}
@@ -271,7 +337,10 @@ export default function HomePage() {
 
       {/* Map */}
       <div className="flex-1">
-        <MapComponent onAOIChange={setAOI} />
+        <MapComponent 
+          onAOIChange={setAOI} 
+          onParcelSelect={setSelectedAddressParcel}
+        />
       </div>
     </div>
   );
